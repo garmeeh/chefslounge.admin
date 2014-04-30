@@ -151,6 +151,53 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 	}
 ])
 
+
+adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
+	function($scope, $http, $state, $ionicModal, $templateCache) {
+
+
+
+		//=== getBooking() ====\\
+
+		$scope.getBookingFn = function() {
+			// on refactore move var direct.
+			var method = 'GET';
+			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/getbookingrequest';
+			$scope.codeStatus = "";
+			console.log('Hit Function getBookingFn');
+
+
+			$http({
+				method: method,
+				url: inserturl,
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				cache: $templateCache
+			}).
+			success(function(response) {
+				console.log(response);
+				$scope.bookings = response;
+
+
+
+			}).
+			error(function(response) {
+				console.log("error");
+				$scope.codeStatus = response || "Request failed";
+				console.log($scope.codeStatus);
+			});
+
+			return false;
+		};
+
+		$scope.getBookingFn();
+
+
+
+	}
+])
+
 adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 
@@ -250,19 +297,19 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 		$scope.getCustomers();
 
-	$scope.contacts = {};
+		$scope.contacts = {};
 
-	var contactsLength = $scope.customers;
-	var firstLetter;
+		var contactsLength = $scope.customers;
+		var firstLetter;
 
-	for (var i = 0; i < contactsLength; i++) {
-		firstLetter = $scope.customers[i].lastname.substring(0, 1).toUpperCase();
+		for (var i = 0; i < contactsLength; i++) {
+			firstLetter = $scope.customers[i].lastname.substring(0, 1).toUpperCase();
 
-		if (!$scope.contacts[firstLetter]) $scope.contacts[firstLetter] = [];
+			if (!$scope.contacts[firstLetter]) $scope.contacts[firstLetter] = [];
 
-		$scope.contacts[firstLetter].push($scope.contacts[i].firstname + ' ' + $scope.contacts[i].lastname);
+			$scope.contacts[firstLetter].push($scope.contacts[i].firstname + ' ' + $scope.contacts[i].lastname);
 
-	}
+		}
 
 
 

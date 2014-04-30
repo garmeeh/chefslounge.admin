@@ -2,11 +2,13 @@
 <ion-nav-buttons side="right">
   <button class="button button-icon icon ion-plus-round" ng-click="newUser()"></button>
 </ion-nav-buttons>
-<ion-nav-buttons side="left">
+<!-- <ion-nav-buttons side="left">
   <button class="button button-icon icon ion-gear-a" ng-click="newUser()"></button>
-</ion-nav-buttons>
+</ion-nav-buttons> -->
+  
   <ion-content class="has-header padding">
-          <div class="list">
+    
+    <div class="list">
 
     <div class="item item-divider"
         ng-repeat-start="(firstLetter, customers) in customers">
@@ -19,6 +21,7 @@
 
     <div ng-repeat-end></div>
 
-</div>
+  </div>
+
   </ion-content>
 </ion-view>
