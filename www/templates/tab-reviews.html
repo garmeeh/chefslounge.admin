@@ -1,5 +1,6 @@
-<ion-view title="BLANK">
+<ion-view title="Reviews">
   <ion-content class="has-header padding">
+  
    <ion-list>
     <div class="item-container">
       <ion-item ng-repeat="review in reviews" type="item-text-wrap">
@@ -16,7 +17,7 @@
 	        </div>
 
 	        <div class="review-respond">
-	        	<span class="button button-block button-positive">Respond</span>
+	        	<buton class="button button-block button-positive" ng-click="respondReview()">Respond</button>
 	        </div>
       		<div style="clear:both;"></div>
       </ion-item>

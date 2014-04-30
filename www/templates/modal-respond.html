@@ -1,0 +1,25 @@
+<div class="modal">
+  <ion-header-bar class="bar bar-header bar-positive">
+    <h1 class="title">Review Reply</h1>
+    <button class="button button-clear button-primary" ng-click="closeRespondReview()">Cancel</button>
+  </ion-header-bar>
+  <ion-content>
+    <div class="padding">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Name</span>
+          <input ng-model="revresponse.name" type="text">
+        </label>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">Message</span>
+          <textarea placeholder="Please enter your message..."
+                    ng-model="revresponse.message"
+                    required
+                    maxlength="500">
+          </textarea>
+        </label>
+        <button class="button button-full button-positive" ng-click="sendReviewResponse(revresponse)">Send</button>
+      </div>
+    </div>
+  </ion-content>
+</div>

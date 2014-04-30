@@ -32,17 +32,16 @@
 	color: white;
 }
 .star-container img{ max-width: 100%; height: auto; }
-
 .review-data{
 	float: left;
 	padding-left: 24px;
 	padding-top: 12px;
     width:70%;
 }
-
 .review-respond{
 	float: right;
     width:15%;
 
 	/*padding-top: 32px;*/
 }
+/* Customers */

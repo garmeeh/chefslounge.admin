@@ -29,12 +29,34 @@ var adminlounge = angular.module('adminlounge', ['ionic', 'adminlounge.services'
             }
         }
     })
+    // Sub Tabs of tab-bookings.html
+    //==============================//
+    .state('tab.booking-requests', {
+        url: '/bookings/booking-requests',
+        views: {
+            'bookings-tab': {
+                templateUrl: 'templates/booking-requests.html',
+                controller: 'BookingCtrl'
+            }
+        }
+    })
+
+    .state('tab.reservations', {
+        url: '/bookings/reservations',
+        views: {
+            'bookings-tab': {
+                templateUrl: 'templates/reservations.html',
+                controller: 'ReservationsCtrl'
+            }
+        }
+    })
 
     .state('tab.customers', {
         url: '/customers',
         views: {
             'customers-tab': {
-                templateUrl: 'templates/tab-customers.html'
+                templateUrl: 'templates/tab-customers.html',
+                controller: 'CustomerCtrl'
             }
         }
     })
