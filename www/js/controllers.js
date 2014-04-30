@@ -45,6 +45,7 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 	}
 ])
 
+
 adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 
@@ -69,7 +70,9 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 				cache: $templateCache
 			}).
 			success(function(response) {
-				console.log("got review", response);
+				console.log(response);
+				$scope.reviews = response;
+
 
 
 			}).

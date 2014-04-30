@@ -14,3 +14,35 @@
 .eighty-w h1{
 	text-align: center;
 }
+/* Review */
+.star-container {
+    background-image:url(../img/star.png);
+    background-position:center;
+    width:10%;
+    height:100px;
+    background-repeat: no-repeat;
+    text-align: center;
+    padding-top: 44px;
+    font-weight: bold;
+    font-size: 1.2em;
+    float: left;
+    /*margin-top: -24px;*/
+}
+.stars{
+	color: white;
+}
+.star-container img{ max-width: 100%; height: auto; }
+
+.review-data{
+	float: left;
+	padding-left: 24px;
+	padding-top: 12px;
+    width:70%;
+}
+
+.review-respond{
+	float: right;
+    width:15%;
+
+	/*padding-top: 32px;*/
+}
