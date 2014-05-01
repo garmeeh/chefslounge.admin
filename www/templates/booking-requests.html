@@ -4,9 +4,9 @@
   <ion-item ng-repeat="booking in bookings">
     <h2>Joe Bloggs</h2>
     <ul>
-    	<li><b>Time:</b> {{booking.timeOfBooking}}</li>
-    	<li><b>Date:</b> {{booking.dateOfBooking | date :fulldate}}</li>
-    	<li><b>Heads:</b> {{booking.noOfGuests}}</li>
+    	<li><b>Time:</b> {{booking.bookingtime}}</li>
+    	<li><b>Date:</b> {{booking.bookingdate | date :fulldate}}</li>
+    	<li><b>Heads:</b> {{booking.bookingguests}}</li>
     </ul>
   </ion-item>
 </ion-list>

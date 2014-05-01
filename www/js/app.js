@@ -65,7 +65,9 @@ var adminlounge = angular.module('adminlounge', ['ionic', 'adminlounge.services'
         url: '/menus',
         views: {
             'menus-tab': {
-                templateUrl: 'templates/tab-menus.html'
+                templateUrl: 'templates/tab-menus.html',
+                controller: 'MenuCtrl'
+
             }
         }
     })
@@ -76,6 +78,16 @@ var adminlounge = angular.module('adminlounge', ['ionic', 'adminlounge.services'
             'reviews-tab': {
                 templateUrl: 'templates/tab-reviews.html',
                 controller: 'ReviewCtrl'
+            }
+        }
+    })
+
+    .state('tab.msg', {
+        url: '/msg',
+        views: {
+            'msg-tab': {
+                templateUrl: 'templates/tab-msg.html',
+                controller: 'MsgCtrl'
             }
         }
     })

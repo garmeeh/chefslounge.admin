@@ -1,0 +1,14 @@
+<ion-view title="Message Center">
+  <ion-content class="has-header padding">
+    <ion-list>
+  <ion-item ng-repeat="message in messages">
+    <h2>Joe Bloggs</h2>
+    <ul>
+    	<li><b>Subject</b> {{message.subject}}</li>
+    	<li><b>Message:</b></li>
+    	<li>{{message.message}}</li>
+    </ul>
+  </ion-item>
+</ion-list>
+  </ion-content>
+</ion-view>

@@ -198,6 +198,123 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 	}
 ])
 
+adminlounge.controller('ReservationsCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
+	function($scope, $http, $state, $ionicModal, $templateCache) {
+
+
+
+	}
+])
+
+adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
+	function($scope, $http, $state, $ionicModal, $templateCache) {
+
+		// Create and load the Modal
+		$ionicModal.fromTemplateUrl('../templates/modal-add-offer.html', function(modal) {
+			$scope.offerModal = modal;
+		}, {
+			scope: $scope,
+			animation: 'slide-in-up'
+		});
+
+		// Create new user and store them in the database
+		$scope.createOffer = function(offer) {
+
+			console.log('Hit createOffer');
+			var offer = 'offferdata=' + JSON.stringify(offer);
+			console.log(offer);
+			$scope.offerModal.hide();
+			var method = 'POST';
+			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/newoffer';
+			$scope.codeStatus = "";
+
+			$http({
+				method: method,
+				url: inserturl,
+				data: offer,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				cache: $templateCache
+			}).
+			success(function(response) {
+				console.log("success", response);
+				$scope.offer = {};
+				//magic!!!! 
+				$state.go('tab.menu', {}, {
+					reload: true,
+					inherit: false
+				});
+				$scope.offerModal.remove();
+
+			}).
+			error(function(response) {
+				console.log("error");
+				$scope.codeStatus = response || "Request failed";
+				console.log($scope.codeStatus);
+			});
+
+			// return false;
+
+		};
+
+
+
+		// Open new offer modal
+		$scope.newOffer = function() {
+			$scope.offerModal.show();
+		};
+
+		// Close new offer modal
+		$scope.closeNewOffer = function() {
+			$scope.offerModal.hide();
+		};
+
+
+	}
+])
+
+adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
+	function($scope, $http, $state, $ionicModal, $templateCache) {
+
+		//=== getMsgFn() ====\\
+
+		$scope.getMsgFn = function() {
+			// on refactore move var direct.
+			var method = 'GET';
+			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/getmsg';
+			$scope.codeStatus = "";
+			console.log('Hit Function getMsgFn');
+
+
+			$http({
+				method: method,
+				url: inserturl,
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				cache: $templateCache
+			}).
+			success(function(response) {
+				console.log(response);
+				$scope.messages = response;
+
+
+
+			}).
+			error(function(response) {
+				console.log("error");
+				$scope.codeStatus = response || "Request failed";
+				console.log($scope.codeStatus);
+			});
+
+			return false;
+		};
+
+		$scope.getMsgFn();
+	}
+])
+
 adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 
@@ -235,7 +352,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 				console.log("success", response);
 				$scope.user = {};
 				//magic!!!! 
-				$state.go('tab-customers', {}, {
+				$state.go('tab.customers', {}, {
 					reload: true,
 					inherit: false
 				});
