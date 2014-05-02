@@ -4,11 +4,16 @@ angular.module('adminlounge.controllers', [])
 adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 
+		if (localStorage.length > 0) {
+			console.log("Clearing localStorage...")
+			localStorage.clear();
+		}
+
 		// Create new user and store them in the database
 		$scope.logIn = function(userdata) {
 
 			console.log('Hit logIn');
-			var user = 'userdata=' + JSON.stringify(userdata);
+			var user = JSON.stringify(userdata);
 			console.log(user);
 
 			var method = 'POST';
@@ -17,20 +22,44 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 
 			$http({
 				method: method,
+				dataType: 'json',
 				url: inserturl,
 				data: user,
 				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
+					'Content-Type': 'application/json'
 				},
 				cache: $templateCache
 			}).
 			success(function(response) {
-				console.log("success", response);
-				$scope.user = {};
-				$state.go('tab.bookings', {}, {
-					reload: true,
-					inherit: false
-				});
+				// console.log("success", response);
+				if (response.statusCode == 200) {
+					alert("It worked!!!");
+					console.log(response);
+
+					var data = response.payload.userData;
+
+					localStorage.setItem("userData", JSON.stringify(data));
+
+					// var user = localStorage.getItem("userData");
+
+					// var userD = JSON.parse(user);
+
+					// $scope.userData = userD;
+
+					// console.log($scope);
+
+					// alert("Hello " + $scope.userData.username)
+
+					$state.go('tab.bookings', {}, {
+						reload: true,
+						inherit: false
+					});
+				} else if (response.statusCode == 500) {
+					console.error("Nope!");
+
+					alert("Username message here!");
+				}
+
 
 			}).
 			error(function(response) {
@@ -96,8 +125,17 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 			animation: 'slide-in-up'
 		});
 		// Open new user modal
-		$scope.respondReview = function() {
-			$scope.respondModal.show();
+		$scope.respondReview = function(idx) {
+			console.log(idx)
+
+		// console.log($scope.reviews[idx].email)
+		// $scope.respondModal.show();
+
+		// $scope.sendEmail = function(email, subject, body) {
+		// 	var link = "mailto:" + email + "?subject=New%20email " + escape(subject); + "&body=" + escape(body);
+
+		// 	window.location.href = link;
+		// };
 		};
 
 		// Close new user modal
@@ -155,8 +193,6 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 
-
-
 		//=== getBooking() ====\\
 
 		$scope.getBookingFn = function() {
@@ -201,8 +237,15 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 adminlounge.controller('ReservationsCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 
+		var user = localStorage.getItem("userData");
 
+		var userD = JSON.parse(user);
 
+		$scope.userData = userD;
+
+		console.log($scope);
+
+		alert("Hello " + $scope.userData.username);
 	}
 ])
 

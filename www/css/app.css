@@ -38,6 +38,9 @@
 	padding-top: 12px;
     width:70%;
 }
+.review-data > p{
+  white-space: normal;
+}
 .review-respond{
 	float: right;
     width:15%;
