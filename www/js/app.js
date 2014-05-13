@@ -25,28 +25,8 @@ var adminlounge = angular.module('adminlounge', ['ionic', 'adminlounge.services'
         url: '/bookings',
         views: {
             'bookings-tab': {
-                templateUrl: 'templates/tab-bookings.html'
-            }
-        }
-    })
-    // Sub Tabs of tab-bookings.html
-    //==============================//
-    .state('tab.booking-requests', {
-        url: '/bookings/booking-requests',
-        views: {
-            'bookings-tab': {
-                templateUrl: 'templates/booking-requests.html',
+                templateUrl: 'templates/tab-bookings.html',
                 controller: 'BookingCtrl'
-            }
-        }
-    })
-
-    .state('tab.reservations', {
-        url: '/bookings/reservations',
-        views: {
-            'bookings-tab': {
-                templateUrl: 'templates/reservations.html',
-                controller: 'ReservationsCtrl'
             }
         }
     })
@@ -92,11 +72,22 @@ var adminlounge = angular.module('adminlounge', ['ionic', 'adminlounge.services'
         }
     })
 
+    .state('tab.offers', {
+        url: '/offers',
+        views: {
+            'offers-tab': {
+                templateUrl: 'templates/tab-offers.html',
+                controller: 'OffersCtrl'
+            }
+        }
+    })
+
     .state('tab.logout', {
         url: '/logout',
         views: {
             'logout-tab': {
-                templateUrl: 'templates/tab-logout.html'
+                templateUrl: 'templates/tab-logout.html',
+                controller: 'LogoutCtrl'
             }
         }
     })

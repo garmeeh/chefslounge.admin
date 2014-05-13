@@ -1,8 +1,28 @@
-<ion-view title="BLANK">
-<ion-nav-buttons side="right">
-  <button class="button button-clear" ng-click="newOffer()">Create Offer</button>
-</ion-nav-buttons>
-  <ion-content class="has-header padding">
-    <p> CONTENT </p>
-  </ion-content>
+<ion-view title="{{activeMenu.title}}">
+	
+	<ion-nav-buttons side="right">
+		<button class="button button-clear" ng-click="newItem()">New Item</button>
+	</ion-nav-buttons>
+	<ion-nav-buttons side="left">
+		<button class="button button-clear" ng-click="newMenu()">Add Menu</button>
+	</ion-nav-buttons>
+	
+	<ion-content scroll="false">
+		<div class="left-side">
+			<ion-list>
+				<ion-item ng-repeat="menu in menus" ng-click="selectMenu(menu, $index)" ng-class="{active: activeMenu == menu}">
+				{{menu.title}}
+				</ion-item>
+			</ion-list>
+		</div>
+		
+		<div class="right-side">
+			<ion-list>
+				<ion-item ng-repeat="item in activeMenu.items">
+				{{item.title}}
+				</ion-item>
+			</ion-list>
+		</div>
+	</ion-content>
 </ion-view>
+

@@ -1,0 +1,14 @@
+<ion-view title="Booking Requests">
+<ion-nav-buttons side="right">
+    <button class="button button-clear" ng-click="newOffer()">Add Offer</button>
+  </ion-nav-buttons>
+  <ion-content class="has-header padding">
+    <ion-list>
+  <ion-item ng-repeat="offer in offers">
+    <h2>{{offer.title}}</h2>
+    <p>{{offer.message}}</p>
+    <p><b>Expires:</b> {{offer.expire}}</p>
+  </ion-item>
+</ion-list>
+  </ion-content>
+</ion-view>

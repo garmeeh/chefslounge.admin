@@ -1,0 +1,23 @@
+<div class="modal">
+ <!-- Modal header bar -->
+    <ion-header-bar class="bar-positive nav-title-slide-ios7">
+      <h1 class="title">Add Menu Item</h1>
+      <button class="button button-clear button-light" ng-click="closeNewItem()">Cancel</button>
+    </ion-header-bar>
+
+    <!-- Modal content area -->
+    <ion-content>
+      <form ng-submit="createItem(item)">
+        <div class="list">
+          <label class="item item-input item-stacked-label">
+            <span class="input-label">Item</span>
+            <input type="text" placeholder="Fish" ng-model="item.title">
+          </label>
+          
+          <div style="width:80%; margin-left:auto; margin-right:auto;">
+            <button type="submit" class="button button-block button-positive">Add Item</button>
+          </div>
+        </div>
+      </form>
+    </ion-content>
+  </div>

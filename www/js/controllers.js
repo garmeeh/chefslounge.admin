@@ -1,5 +1,28 @@
 angular.module('adminlounge.controllers', [])
 
+
+//Log Out 
+adminlounge.controller('LogoutCtrl', ['$scope', '$state', '$templateCache',
+	function($scope, $state, $templateCache) {
+
+		$scope.logOut = function() {
+			localStorage.clear();
+			$state.go('login', {}, {
+				reload: true,
+				inherit: false
+			});
+		}
+
+		$scope.dontLogOut = function() {
+			$state.go('tab.bookings', {}, {
+				reload: true,
+				inherit: false
+			});
+		}
+
+
+	}
+])
 //Log In controller
 adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
@@ -128,14 +151,18 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 		$scope.respondReview = function(idx) {
 			console.log(idx)
 
-		// console.log($scope.reviews[idx].email)
-		// $scope.respondModal.show();
+			console.log($scope.reviews[idx].email);
+			//$scope.respondModal.show();
 
-		// $scope.sendEmail = function(email, subject, body) {
-		// 	var link = "mailto:" + email + "?subject=New%20email " + escape(subject); + "&body=" + escape(body);
+			$scope.sendEmail = function(email) {
+				var link = "mailto:" + email;
 
-		// 	window.location.href = link;
-		// };
+
+				window.location.href = link;
+
+			};
+
+			$scope.sendEmail($scope.reviews[idx].email);
 		};
 
 		// Close new user modal
@@ -248,9 +275,133 @@ adminlounge.controller('ReservationsCtrl', ['$scope', '$http', '$state', '$ionic
 		alert("Hello " + $scope.userData.username);
 	}
 ])
+//
+//
+//
 
-adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $templateCache) {
+.factory('Menus', function() {
+	return {
+		all: function() {
+			var menuString = window.localStorage['menus'];
+			if (menuString) {
+				return angular.fromJson(menuString);
+			}
+			return [];
+		},
+		save: function(menus) {
+			window.localStorage['menus'] = angular.toJson(menus);
+		},
+		newMenu: function(menuTitle) {
+			// Add a new menu
+			return {
+				title: menuTitle,
+				items: []
+			};
+		},
+		getLastActiveIndex: function() {
+			return parseInt(window.localStorage['lastActiveMenu']) || 0;
+		},
+		setLastActiveIndex: function(index) {
+			window.localStorage['lastActiveMenu'] = index;
+		}
+	}
+})
+adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 'Menus', '$timeout', '$templateCache',
+	function($scope, $http, $state, $ionicModal, Menus, $timeout, $templateCache) {
+
+
+		//Menu Creation
+
+
+		// A utility function for creating a new menu
+		// with the given menuTitle
+		var createMenu = function(menuTitle) {
+			var newMenu = Menus.newMenu(menuTitle);
+			$scope.menus.push(newMenu);
+			Menus.save($scope.menus);
+			$scope.selectMenu(newMenu, $scope.menus.length - 1);
+		}
+
+		// Load or initialize menus
+		$scope.menus = Menus.all();
+
+		// Grab the last active, or the first menu
+		$scope.activeMenu = $scope.menus[Menus.getLastActiveIndex()];
+
+		// Called to create a new menu
+		$scope.newMenu = function() {
+			var menuTitle = prompt('Menu name');
+			if (menuTitle) {
+				createMenu(menuTitle);
+			}
+		};
+
+		// Called to select the given menu
+		$scope.selectMenu = function(menu, index) {
+			$scope.activeMenu = menu;
+			Menus.setLastActiveIndex(index);
+			$ionicSideMenuDelegate.toggleLeft(false);
+
+		};
+
+
+		$scope.item = [];
+		// Create and load the Modal
+		$ionicModal.fromTemplateUrl('../templates/modal-menu.html', function(modal) {
+			$scope.itemModal = modal;
+		}, {
+			scope: $scope,
+			animation: 'slide-in-up'
+		});
+
+		$scope.createItem = function(item) {
+			if (!$scope.activeMenu || !item) {
+				return;
+			}
+			$scope.activeMenu.items.push({
+				title: item.title
+			});
+			$scope.itemModal.hide();
+
+			// Inefficient, but save all the menus
+			Menus.save($scope.menus);
+
+			item.title = "";
+		};
+
+		// Open our new item modal
+		$scope.newItem = function() {
+			$scope.itemModal.show();
+		};
+
+		// Close the new item modal
+		$scope.closeNewItem = function() {
+			$scope.itemModal.hide();
+		};
+
+
+
+		// Try to create the first menu, make sure to defer
+		// this by using $timeout so everything is initialized
+		// properly
+		$timeout(function() {
+			if ($scope.menus.length == 0) {
+				while (true) {
+					var menuTitle = prompt('Your first menu title:');
+					if (menuTitle) {
+						createMenu(menuTitle);
+						break;
+					}
+				}
+			}
+		});
+
+
+	}
+])
+adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal', '$timeout', '$templateCache',
+	function($scope, $http, $state, $ionicModal, $timeout, $templateCache) {
+
 
 		// Create and load the Modal
 		$ionicModal.fromTemplateUrl('../templates/modal-add-offer.html', function(modal) {
@@ -284,7 +435,7 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 				console.log("success", response);
 				$scope.offer = {};
 				//magic!!!! 
-				$state.go('tab.menu', {}, {
+				$state.go('tab.offers', {}, {
 					reload: true,
 					inherit: false
 				});
@@ -313,10 +464,44 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 			$scope.offerModal.hide();
 		};
 
+		//=== getOfferFn() ====\\
+
+		$scope.getOfferFn = function() {
+			// on refactore move var direct.
+			var method = 'GET';
+			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/getoffer';
+			$scope.codeStatus = "";
+			console.log('Hit Function getOfferFn');
+
+
+			$http({
+				method: method,
+				url: inserturl,
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				cache: $templateCache
+			}).
+			success(function(response) {
+				console.log(response);
+				$scope.offers = response;
+
+
+
+			}).
+			error(function(response) {
+				console.log("error");
+				$scope.codeStatus = response || "Request failed";
+				console.log($scope.codeStatus);
+			});
+
+			return false;
+		};
+
+		$scope.getOfferFn();
 
 	}
 ])
-
 adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 

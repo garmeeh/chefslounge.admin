@@ -47,4 +47,12 @@
 
 	/*padding-top: 32px;*/
 }
-/* Customers */
+/* Test */
+.left-side{
+  float: left;
+  width: 25%;
+}
+.right-side{
+  float: left;
+  width: 75%;
+}
