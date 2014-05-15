@@ -62,3 +62,12 @@ color: #fff;
   float: left;
   width: 75%;
 }
+/*Msg Center*/
+.msg-left{
+  width: 70%;
+  float: left;
+}
+.msg-right{
+  width: 30%;
+  float: left;
+}

@@ -2,12 +2,18 @@
   <ion-content class="has-header padding">
     <ion-list>
   <ion-item ng-repeat="message in messages">
+    <div class="msg-left">
     <h2>Joe Bloggs</h2>
     <ul>
     	<li><b>Subject</b> {{message.subject}}</li>
     	<li><b>Message:</b></li>
     	<li>{{message.message}}</li>
     </ul>
+    </div>
+    <div class="msg-right">
+      <buton class="button button-block button-positive" ng-click="respondReview($index)">Respond</button>
+    </div>
+    <div style="clear:both;"></div>
   </ion-item>
 </ion-list>
   </ion-content>

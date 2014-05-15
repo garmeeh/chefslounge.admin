@@ -6,7 +6,7 @@ adminlounge.controller('LogoutCtrl', ['$scope', '$state', '$templateCache',
 	function($scope, $state, $templateCache) {
 
 		$scope.logOut = function() {
-			localStorage.clear();
+			localStorage.removeItem("userData");
 			$state.go('login', {}, {
 				reload: true,
 				inherit: false
@@ -24,12 +24,14 @@ adminlounge.controller('LogoutCtrl', ['$scope', '$state', '$templateCache',
 	}
 ])
 //Log In controller
-adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $templateCache) {
+adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal', '$ionicPopup', '$templateCache',
+	function($scope, $http, $state, $ionicModal, $ionicPopup, $templateCache) {
 
 		if (localStorage.length > 0) {
-			console.log("Clearing localStorage...")
-			localStorage.clear();
+			console.log("Clearing Current User Data....")
+			//localStorage.clear();
+			localStorage.removeItem("userData");
+
 		}
 
 		// Create new user and store them in the database
@@ -56,12 +58,23 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 			success(function(response) {
 				// console.log("success", response);
 				if (response.statusCode == 200) {
-					alert("It worked!!!");
+					// alert("It worked!!!");
+					// A confirm dialog
 					console.log(response);
 
 					var data = response.payload.userData;
 
 					localStorage.setItem("userData", JSON.stringify(data));
+
+					var alertPopup = $ionicPopup.alert({
+						title: 'Log In Success',
+						template: 'It might taste good'
+					});
+					alertPopup.then(function(res) {
+						console.log('Logged In');
+					});
+
+
 
 					// var user = localStorage.getItem("userData");
 
@@ -80,7 +93,13 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 				} else if (response.statusCode == 500) {
 					console.error("Nope!");
 
-					alert("Username message here!");
+					var alertPopup = $ionicPopup.alert({
+						title: 'Invalid log in. Please Try Again',
+						//template: 'It might taste good'
+					});
+					alertPopup.then(function(res) {
+						console.log('Invalid');
+					});
 				}
 
 
@@ -101,9 +120,7 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 
-
-
-		//=== getReviewFn() ====\\
+		// Populate review page with data. Pull from databse via server
 
 		$scope.getReviewFn = function() {
 			// on refactore move var direct.
@@ -111,7 +128,6 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/getreview';
 			$scope.codeStatus = "";
 			console.log('Hit Function getReviewFn');
-
 
 			$http({
 				method: method,
@@ -125,8 +141,6 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 				console.log(response);
 				$scope.reviews = response;
 
-
-
 			}).
 			error(function(response) {
 				console.log("error");
@@ -136,18 +150,11 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 			return false;
 		};
-
 		$scope.getReviewFn();
 
-		//Modal
-		// Create and load the Modal
-		$ionicModal.fromTemplateUrl('../templates/modal-respond.html', function(modal) {
-			$scope.respondModal = modal;
-		}, {
-			scope: $scope,
-			animation: 'slide-in-up'
-		});
-		// Open new user modal
+
+		// Handle respond button to review. Opens deafult mail client
+		// and loads current index email. 
 		$scope.respondReview = function(idx) {
 			console.log(idx)
 
@@ -165,63 +172,14 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 			$scope.sendEmail($scope.reviews[idx].email);
 		};
 
-		// Close new user modal
-		$scope.closeRespondReview = function() {
-			$scope.respondModal.hide();
-		};
-
-		// Modal data
-		// Create new user and store them in the database
-		$scope.sendReviewResponse = function(revresponse) {
-
-			console.log('Hit Review Response');
-			var msg = 'message=' + JSON.stringify(revresponse);
-			console.log(msg);
-			$scope.respondModal.hide();
-			var method = 'POST';
-			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/sendmessage';
-			$scope.codeStatus = "";
-
-			$http({
-				method: method,
-				url: inserturl,
-				data: msg,
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				cache: $templateCache
-			}).
-			success(function(response) {
-				console.log("success", response);
-				$scope.msg = {};
-				//magic!!!! 
-				$state.go('tab.reviews', {}, {
-					reload: true,
-					inherit: false
-				});
-				$scope.respondModal.remove();
-
-			}).
-			error(function(response) {
-				console.log("error");
-				$scope.codeStatus = response || "Request failed";
-				console.log($scope.codeStatus);
-			});
-
-			// return false;
-
-		};
-
 
 	}
 ])
 
-
 adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 
-		//=== getBooking() ====\\
-
+		// Populate booking tab with booking requests.
 		$scope.getBookingFn = function() {
 			// on refactore move var direct.
 			var method = 'GET';
@@ -253,11 +211,7 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 
 			return false;
 		};
-
 		$scope.getBookingFn();
-
-
-
 	}
 ])
 
@@ -275,10 +229,8 @@ adminlounge.controller('ReservationsCtrl', ['$scope', '$http', '$state', '$ionic
 		alert("Hello " + $scope.userData.username);
 	}
 ])
-//
-//
-//
 
+// Handle menu creation. 
 .factory('Menus', function() {
 	return {
 		all: function() {
@@ -294,7 +246,7 @@ adminlounge.controller('ReservationsCtrl', ['$scope', '$http', '$state', '$ionic
 		newMenu: function(menuTitle) {
 			// Add a new menu
 			return {
-				title: menuTitle,
+				menuName: menuTitle,
 				items: []
 			};
 		},
@@ -306,8 +258,8 @@ adminlounge.controller('ReservationsCtrl', ['$scope', '$http', '$state', '$ionic
 		}
 	}
 })
-adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 'Menus', '$timeout', '$templateCache',
-	function($scope, $http, $state, $ionicModal, Menus, $timeout, $templateCache) {
+adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 'Menus', '$timeout', '$ionicPopup', '$templateCache',
+	function($scope, $http, $state, $ionicModal, Menus, $timeout, $ionicPopup, $templateCache) {
 
 
 		//Menu Creation
@@ -330,36 +282,51 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 
 		// Called to create a new menu
 		$scope.newMenu = function() {
-			var menuTitle = prompt('Menu name');
-			if (menuTitle) {
-				createMenu(menuTitle);
-			}
+			//var menuTitle = prompt('Menu Name');
+			$ionicPopup.prompt({
+				title: 'Menu Name',
+				inputType: 'text',
+				inputPlaceholder: 'Enter Menu Name...'
+			}).then(function(res) {
+				if (res != false) {
+					createMenu(res);
+				} else {
+
+					console.log("cancel");
+
+
+				}
+			});
+
 		};
 
 		// Called to select the given menu
 		$scope.selectMenu = function(menu, index) {
 			$scope.activeMenu = menu;
 			Menus.setLastActiveIndex(index);
-			$ionicSideMenuDelegate.toggleLeft(false);
+			// $ionicSideMenuDelegate.toggleLeft(false);
 
 		};
 
 
 		$scope.item = [];
 		// Create and load the Modal
-		$ionicModal.fromTemplateUrl('../templates/modal-menu.html', function(modal) {
+		$ionicModal.fromTemplateUrl('item-modal.html', function(modal) {
 			$scope.itemModal = modal;
 		}, {
 			scope: $scope,
 			animation: 'slide-in-up'
 		});
 
+
+		//take a look at addItem
 		$scope.createItem = function(item) {
 			if (!$scope.activeMenu || !item) {
 				return;
 			}
 			$scope.activeMenu.items.push({
-				title: item.title
+				title: item.title,
+				price: item.price
 			});
 			$scope.itemModal.hide();
 
@@ -367,16 +334,28 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 			Menus.save($scope.menus);
 
 			item.title = "";
+			item.price = "";
 		};
 
 		// Open our new item modal
 		$scope.newItem = function() {
+			//$scope.itemModal.show();
 			$scope.itemModal.show();
+
 		};
 
 		// Close the new item modal
 		$scope.closeNewItem = function() {
-			$scope.itemModal.hide();
+			//$scope.itemModal.hide();
+			// Remove dialog 
+			$scope.itemModal.remove();
+			// Reload modal template to have cleared form
+			$ionicModal.fromTemplateUrl('item-modal.html', function(modal) {
+				$scope.itemModal = modal;
+			}, {
+				scope: $scope,
+				animation: 'slide-in-up'
+			});
 		};
 
 
@@ -386,19 +365,81 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 		// properly
 		$timeout(function() {
 			if ($scope.menus.length == 0) {
-				while (true) {
-					var menuTitle = prompt('Your first menu title:');
-					if (menuTitle) {
-						createMenu(menuTitle);
-						break;
-					}
-				}
+				//while (true) {
+				$ionicPopup.prompt({
+					title: 'Menu Name',
+					inputType: 'text',
+					inputPlaceholder: 'Enter Menu Name...'
+				}).then(function(res) {
+					createMenu(res);
+
+				});
+				//}
 			}
 		});
 
+		// $scope.deleteItem = function(idx) {
+
+		// 	console.log($scope.activeMenu.items[idx]);
+		// 	$scope.activeMenu.items.splice($scope.activeMenu.items[idx], 1);
+		// 	Menus.save($scope.menus);
+		// }
+
+		// //Added item functionality
+		// // Define item buttons
+		// $scope.itemButtons = [{
+		// 	text: 'Delete',
+		// 	type: 'button-assertive',
+		// 	onTap: function(item) {
+		// 		$scope.removeItem(item);
+		// 	}
+		// }, {
+		// 	text: 'Edit',
+		// 	type: 'button-calm',
+		// 	onTap: function(item) {
+		// 		$scope.showEditItem(item);
+		// 	}
+		// }];
+
+		// // Used to cache the empty form for Edit Dialog
+		// $scope.saveEmpty = function(itemForm) {
+		// 	$scope.itemForm = angular.copy(itemForm);
+		// }
+		// $scope.removeItem = function(item) {
+		// 	// Search & Destroy item from list
+		// $scope.activeMenu.items.splice($scope.item.indexOf(item));
+
+		// 	Menus.save($scope.menus);
+
+		// }
+
+		// $scope.showEditItem = function(item) {
+
+		// 	// Remember edit item to change it later
+		// 	$scope.tmpEditItem = item;
+
+		// 	// Preset form values
+		// 	//$scope.item.title.$setViewValue(item.title);
+		// 	// Open dialog
+		// 	$scope.newItem('change');
+		// };
+
+		// $scope.editItem = function(item) {
+
+		// 	var item = {};
+		// 	item.title = item.title;
+
+		// 	var editIndex = Menus.all().indexOf($scope.tmpEditItem);
+		// 	$scope.activeMenu.items[editIndex] = item;
+
+		// 	Menus.save($scope.menus);
+
+		// 	$scope.closeNewItem();
+		// }
 
 	}
 ])
+
 adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal', '$timeout', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $timeout, $templateCache) {
 
@@ -502,6 +543,7 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 	}
 ])
+
 adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
 	function($scope, $http, $state, $ionicModal, $templateCache) {
 
@@ -549,7 +591,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 
 		// Create and load the Modal
-		$ionicModal.fromTemplateUrl('../templates/modal-add-customer.html', function(modal) {
+		$ionicModal.fromTemplateUrl('new-user.html', function(modal) {
 			$scope.userModal = modal;
 		}, {
 			scope: $scope,

@@ -1,6 +1,6 @@
 'use strict';
 
-var adminlounge = angular.module('adminlounge', ['ionic', 'adminlounge.services', 'adminlounge.controllers'])
+var adminlounge = angular.module('adminlounge', ['ionic', 'adminlounge.services', 'adminlounge.controllers', 'adminlounge.directives'])
 
 
 .config(function($stateProvider, $urlRouterProvider) {
