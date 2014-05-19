@@ -1,15 +1,22 @@
 <ion-view title="Booking Requests">
   <ion-content class="has-header padding">
     <ion-list>
-      <ion-item ng-repeat="booking in bookings | orderBy:'bookingdate'">
+      <ion-item ng-repeat="booking in bookings | orderBy:['bookingdate','bookingtime']">
 
-        <h2>Joe Bloggs</h2>
-        <!-- <h2>{{booking.booker}}</h2> -->
-          <ul>
-            <li><b>Time:</b> {{booking.bookingtime}}</li>
-            <li><b>Date:</b> {{booking.bookingdate | date :fulldate}}</li>
-            <li><b>Heads:</b> {{booking.bookingguests}}</li>
-          </ul>
+        <div class="msg-left">
+          <h2>{{booking.firstname}} {{booking.lastname}}</h2>
+          <h3>Booked: {{booking.sent}}</h3>
+          <!-- <h2>{{booking.booker}}</h2> -->
+            <ul>
+              <li><b>Time:</b> {{booking.bookingtime}}</li>
+              <li><b>Date:</b> {{booking.bookingdate | date :fulldate}}</li>
+              <li><b>Heads:</b> {{booking.bookingguests}}</li>
+            </ul>
+        </div>
+
+        <div class="msg-right">
+          <buton class="button button-block button-positive" ng-click="respondBooking($index)">Respond</button>
+        </div>
       </ion-item>
     </ion-list>
   </ion-content>

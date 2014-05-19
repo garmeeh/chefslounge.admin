@@ -7,18 +7,36 @@
 </ion-nav-buttons> -->
   
   <ion-content class="has-header padding">
-    
+     <form>
+      <input ng-model="query" type="text"
+        placeholder="Search..." autofocus>
+    </form>
     <div class="list">
 
     <!-- <input type="search" ng-model="customers" /> -->
-    <div ng-repeat="customer in customers | orderBy:'lastname'">
+    <div ng-repeat="customer in customers | orderBy:'lastname' | filter: query">
       <div class="item item-divider">
           {{customer.lastname}}, {{ customer.firstname }} 
       </div>
 
       <div class="item">
-        <p>{{ customer.email }}</p>
-        <p>{{ customer.dob }}</p>
+      <p class="item item-icon-left" ng-click="emailCustomer($index)">
+      <i class="icon ion-email"></i>
+      {{ customer.email }}
+      </p>
+
+      <p class="item item-icon-left">
+      <i class="icon ion-iphone"></i>
+      {{ customer.phone }}
+      </p>
+
+      <p class="item item-icon-left">
+      <i class="icon ion-calendar"></i>
+      {{ customer.dob }}
+      </p>
+
+        
+
       </div>
     </div>
 

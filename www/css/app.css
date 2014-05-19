@@ -67,7 +67,13 @@ color: #fff;
   width: 70%;
   float: left;
 }
+.msg-left > p{
+  white-space: normal;
+
+}
 .msg-right{
-  width: 30%;
+  width: 20%;
   float: left;
+  margin-left: 10%;
+  margin-top: 5%;
 }

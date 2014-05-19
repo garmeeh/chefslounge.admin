@@ -24,8 +24,8 @@ adminlounge.controller('LogoutCtrl', ['$scope', '$state', '$templateCache',
 	}
 ])
 //Log In controller
-adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal', '$ionicPopup', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $ionicPopup, $templateCache) {
+adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal', '$ionicPopup', 'md5', '$templateCache',
+	function($scope, $http, $state, $ionicModal, $ionicPopup, md5, $templateCache) {
 
 		if (localStorage.length > 0) {
 			console.log("Clearing Current User Data....")
@@ -37,9 +37,12 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 		// Create new user and store them in the database
 		$scope.logIn = function(userdata) {
 
+
 			console.log('Hit logIn');
 			var user = JSON.stringify(userdata);
 			console.log(user);
+
+			console.log(md5.createHash(user.password || ''));
 
 			var method = 'POST';
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/login';
@@ -212,6 +215,26 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 			return false;
 		};
 		$scope.getBookingFn();
+
+
+		// Handle respond button to bookings. Opens deafult mail client
+		// and loads current index email. 
+		$scope.respondBooking = function(idx) {
+			console.log(idx)
+
+			console.log($scope.bookings[idx].email);
+
+
+			$scope.sendEmail = function(email) {
+				var link = "mailto:" + email;
+
+
+				window.location.href = link;
+
+			};
+
+			$scope.sendEmail($scope.bookings[idx].email);
+		};
 	}
 ])
 
@@ -437,6 +460,50 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 		// 	$scope.closeNewItem();
 		// }
 
+		$scope.syncMenu = function() {
+
+			var menus = localStorage.getItem("menus");
+
+			var menuD = JSON.parse(menus);
+
+			//$scope.userData = userD;
+
+			console.log('Hit syncMenu');
+			var menu = 'menu=' + JSON.stringify(menuD);
+			console.log(menu);
+			var method = 'POST';
+			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/syncmenu';
+			$scope.codeStatus = "";
+
+			$http({
+				method: method,
+				url: inserturl,
+				data: menu,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				cache: $templateCache
+			}).
+			success(function(response) {
+				console.log("success", response);
+				$state.go('tab.menus', {}, {
+					reload: true,
+					inherit: false
+				});
+
+
+			}).
+			error(function(response) {
+				console.log("error");
+				$scope.codeStatus = response || "Request failed";
+				console.log($scope.codeStatus);
+			});
+
+			// return false;
+
+		};
+
+
 	}
 ])
 
@@ -582,6 +649,25 @@ adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '
 		};
 
 		$scope.getMsgFn();
+
+		// Handle respond button to messages. Opens deafult mail client
+		// and loads current index email. 
+		$scope.respondMsg = function(idx) {
+			console.log(idx)
+
+			console.log($scope.messages[idx].email);
+			//$scope.respondModal.show();
+
+			$scope.sendEmail = function(email) {
+				var link = "mailto:" + email;
+
+
+				window.location.href = link;
+
+			};
+
+			$scope.sendEmail($scope.messages[idx].email);
+		};
 	}
 ])
 
@@ -698,6 +784,24 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 		}
 
+		// Handle respond button to customers. Opens deafult mail client
+		// and loads current index email. 
+		$scope.emailCustomer = function(idx) {
+			console.log(idx)
+
+			console.log($scope.customers[idx].email);
+
+
+			$scope.sendEmail = function(email) {
+				var link = "mailto:" + email;
+
+
+				window.location.href = link;
+
+			};
+
+			$scope.sendEmail($scope.customers[idx].email);
+		};
 
 
 	}
