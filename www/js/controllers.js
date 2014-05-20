@@ -503,8 +503,6 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 
 			var menuD = JSON.parse(menus);
 
-			//$scope.userData = userD;
-
 			console.log('Hit syncMenu');
 			var menu = 'menu=' + JSON.stringify(menuD);
 			console.log(menu);
@@ -519,16 +517,21 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-
 			}).
 			success(function(response) {
 				console.log("success", response);
-				$state.go('tab.menus', {}, {
-					reload: true,
-					inherit: false
+				var alertDOBPopup = $ionicPopup.alert({
+					title: 'Menus Updated in Database',
+					okType: 'button-dark'
+
 				});
-
-
+				alertDOBPopup.then(function(res) {
+					console.log('Menus Syncd');
+					$state.go('tab.menus', {}, {
+						reload: true,
+						inherit: false
+					});
+				});
 			}).
 			error(function(response) {
 				console.log("error");
