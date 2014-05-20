@@ -1,46 +1,48 @@
-<ion-view title="Customers">
+<ion-view title="Customers" ng-init="getCustomers()">
 <ion-nav-buttons side="right">
   <button class="button button-icon icon ion-plus-round" ng-click="newUser()"></button>
 </ion-nav-buttons>
-<!-- <ion-nav-buttons side="left">
-  <button class="button button-icon icon ion-gear-a" ng-click="newUser()"></button>
-</ion-nav-buttons> -->
   
   <ion-content class="has-header padding">
-     <form>
-      <input ng-model="query" type="text"
+  
+    <ion-refresher on-refresh="doRefresh()"
+                      pulling-text="Pull to refresh..."
+                      refreshing-text="Refreshing!"
+                      refreshing-icon="ion-loading-a">
+      </ion-refresher>
+
+      <form>
+        <input ng-model="query" type="text"
         placeholder="Search..." autofocus>
-    </form>
+      </form>
+
     <div class="list">
 
-    <!-- <input type="search" ng-model="customers" /> -->
-    <div ng-repeat="customer in customers | orderBy:'lastname' | filter: query">
-      <div class="item item-divider">
-          {{customer.lastname}}, {{ customer.firstname }} 
-      </div>
+      <div ng-repeat="customer in customers | orderBy:'lastname' | filter: query">
+        <div class="item item-divider">
+            {{customer.lastname}}, {{ customer.firstname }} 
+        </div>
 
-      <div class="item">
-      <p class="item item-icon-left" ng-click="emailCustomer($index)">
-      <i class="icon ion-email"></i>
-      {{ customer.email }}
-      </p>
+        <div class="item">
 
-      <p class="item item-icon-left">
-      <i class="icon ion-iphone"></i>
-      {{ customer.phone }}
-      </p>
+          <p class="item item-icon-left" ng-click="emailCustomer($index)">
+          <i class="icon ion-email"></i>
+          {{ customer.email }}
+          </p>
 
-      <p class="item item-icon-left">
-      <i class="icon ion-calendar"></i>
-      {{ customer.dob }}
-      </p>
+          <p class="item item-icon-left">
+          <i class="icon ion-iphone"></i>
+          {{ customer.phone }}
+          </p>
 
-        
+          <p class="item item-icon-left">
+          <i class="icon ion-calendar"></i>
+          {{ customer.dob }}
+          </p>
 
-      </div>
+        </div>
+
     </div>
-
-    <!-- <div ng-repeat-end></div> -->
 
   </div>
 
@@ -53,8 +55,8 @@
   <div class="modal">
 
     <!-- Modal header bar -->
-    <ion-header-bar class="bar-dark nav-title-slide-ios7">
-      <h1 class="title">Sign Up</h1>
+    <ion-header-bar class="bar-positive nav-title-slide-ios7">
+      <h1 class="title">Add Customer</h1>
       <button class="button button-clear button-light" ng-click="closeNewUser()">Cancel</button>
     </ion-header-bar>
 
@@ -91,7 +93,7 @@
             <input type="date" ng-model="user.dob">
           </label>
           <div style="width:80%; margin-left:auto; margin-right:auto;">
-            <button type="submit" class="button button-block button-dark">Sign Up</button>
+            <button type="submit" class="button button-block button-positive">Add</button>
           </div>
         </div>
       </form>

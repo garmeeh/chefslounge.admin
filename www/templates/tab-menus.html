@@ -1,7 +1,7 @@
 <ion-view title="{{activeMenu.title}}">
 	
 	<ion-nav-buttons side="right">
-		<button class="button button-clear" ng-click="newItem()">New Item</button>
+		<button class="button button-clear" ng-click="newItem('add')">New Item</button>
 		<button class="button button-clear" ng-click="newMenu()">Add Menu</button>
 	</ion-nav-buttons>
 
@@ -9,28 +9,23 @@
 		<button class="button button-clear" ng-click="syncMenu()">Sync</button>
 	</ion-nav-buttons>
 	
-	<ion-content scroll="false">
-
+	<ion-content>
+	
 		<div class="left-side">
-			<ion-list option-buttons="menuButtons" can-swipe="true">
+			<ion-list>
 				<ion-item ng-repeat="menu in menus" ng-click="selectMenu(menu, $index)" ng-class="{active: activeMenu == menu}">
 				{{menu.menuName}}
 				</ion-item>
 			</ion-list>
 		</div>
 		
-		<div class="right-side">
+		<div class="right-side special">
 
-			<ion-list>
+			<ion-list option-buttons="itemButtons"  can-swipe="true" can-reorder="true">
 
-				<ion-item ng-repeat="item in activeMenu.items">
-				{{item.title}}<span style="float:right;">€{{item.price}}
-				<!-- <span class="del-edit">
-					<button class="button" ng-click="deleteItem($index)">DEL</button>
-				</span> -->
-
-
-
+				<ion-item item="item" ng-repeat="item in activeMenu.items">
+				
+				{{item.title}}<span style="float:right;" ng-show="{{item.price}}">€{{item.price}}
 				</span>
 				
 				</ion-item>
@@ -44,13 +39,13 @@
 	<div class="modal">
  <!-- Modal header bar -->
     <ion-header-bar class="bar-positive nav-title-slide-ios7">
-      <h1 class="title">Add Menu Item</h1>
+      <h1 class="title">Menu Item</h1>
       <button class="button button-clear button-light" ng-click="closeNewItem()">Cancel</button>
     </ion-header-bar>
 
     <!-- Modal content area -->
     <ion-content>
-      <form>
+      <form name="form" ng-model="form">
         <div class="list">
           <label class="item item-input item-stacked-label">
             <span class="input-label">Item</span>
@@ -62,8 +57,12 @@
           </label>
           
           <div style="width:80%; margin-left:auto; margin-right:auto;">
-            <ion-button class="button button-block button-positive" ng-click="createItem(item)">
+
+				<ion-button ng-show="action == 'add'" ng-init="saveEmpty(form)" class="button button-block button-positive" ng-click="createItem(item)">
 		  				Add
+				</ion-button>
+				<ion-button ng-show="action == 'change'" class="button button-block button-positive" ng-click="editItem(item)">
+		  				Edit
 				</ion-button>
 				
           </div>

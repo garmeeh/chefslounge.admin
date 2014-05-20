@@ -2,11 +2,12 @@ angular.module('adminlounge.controllers', [])
 
 
 //Log Out 
-adminlounge.controller('LogoutCtrl', ['$scope', '$state', '$templateCache',
-	function($scope, $state, $templateCache) {
+adminlounge.controller('LogoutCtrl', ['$scope', '$state',
+	function($scope, $state) {
 
 		$scope.logOut = function() {
 			localStorage.removeItem("userData");
+
 			$state.go('login', {}, {
 				reload: true,
 				inherit: false
@@ -20,12 +21,20 @@ adminlounge.controller('LogoutCtrl', ['$scope', '$state', '$templateCache',
 			});
 		}
 
+		$scope.delAllMenus = function() {
+			localStorage.clear();
+			$state.go('login', {}, {
+				reload: true,
+				inherit: false
+			});
+		}
+
 
 	}
 ])
 //Log In controller
-adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal', '$ionicPopup', 'md5', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $ionicPopup, md5, $templateCache) {
+adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal', '$ionicPopup', 'md5',
+	function($scope, $http, $state, $ionicModal, $ionicPopup, md5) {
 
 		if (localStorage.length > 0) {
 			console.log("Clearing Current User Data....")
@@ -56,7 +65,6 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				cache: $templateCache
 			}).
 			success(function(response) {
 				// console.log("success", response);
@@ -76,18 +84,6 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 					alertPopup.then(function(res) {
 						console.log('Logged In');
 					});
-
-
-
-					// var user = localStorage.getItem("userData");
-
-					// var userD = JSON.parse(user);
-
-					// $scope.userData = userD;
-
-					// console.log($scope);
-
-					// alert("Hello " + $scope.userData.username)
 
 					$state.go('tab.bookings', {}, {
 						reload: true,
@@ -113,16 +109,36 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 				console.log($scope.codeStatus);
 			});
 
-			// return false;
-
 		};
 	}
 ])
 
 
-adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $templateCache) {
+adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal', '$timeout',
+	function($scope, $http, $state, $ionicModal, $timeout) {
 
+		$scope.doRefresh = function() {
+
+			console.log('Refreshing!');
+			$timeout(function() {
+
+				$scope.getReviewFn();
+				console.log("Refreshing");
+
+				//Stop the ion-refresher from spinning
+				$scope.$broadcast('scroll.refreshComplete');
+
+			}, 1000);
+
+		};
+
+		$scope.$watch('reviews', function(newVal, oldVal) {
+			if (newVal === oldVal) {
+				return;
+			}
+
+			$scope.reviews = newVal;
+		});
 		// Populate review page with data. Pull from databse via server
 
 		$scope.getReviewFn = function() {
@@ -138,10 +154,10 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				cache: $templateCache
+
 			}).
 			success(function(response) {
-				console.log(response);
+				// console.log(response);
 				$scope.reviews = response;
 
 			}).
@@ -151,9 +167,9 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 				console.log($scope.codeStatus);
 			});
 
-			return false;
+
 		};
-		$scope.getReviewFn();
+
 
 
 		// Handle respond button to review. Opens deafult mail client
@@ -179,9 +195,31 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 	}
 ])
 
-adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $templateCache) {
+adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal', '$timeout',
+	function($scope, $http, $state, $ionicModal, $timeout) {
 
+		$scope.doRefresh = function() {
+
+			console.log('Refreshing!');
+			$timeout(function() {
+
+				$scope.getBookingFn();
+				console.log("Refreshing");
+
+				//Stop the ion-refresher from spinning
+				$scope.$broadcast('scroll.refreshComplete');
+
+			}, 1000);
+
+		};
+
+		$scope.$watch('bookings', function(newVal, oldVal) {
+			if (newVal === oldVal) {
+				return;
+			}
+
+			$scope.bookings = newVal;
+		});
 		// Populate booking tab with booking requests.
 		$scope.getBookingFn = function() {
 			// on refactore move var direct.
@@ -197,7 +235,6 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				cache: $templateCache
 			}).
 			success(function(response) {
 				console.log(response);
@@ -214,7 +251,7 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 
 			return false;
 		};
-		$scope.getBookingFn();
+
 
 
 		// Handle respond button to bookings. Opens deafult mail client
@@ -235,21 +272,6 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 
 			$scope.sendEmail($scope.bookings[idx].email);
 		};
-	}
-])
-
-adminlounge.controller('ReservationsCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $templateCache) {
-
-		var user = localStorage.getItem("userData");
-
-		var userD = JSON.parse(user);
-
-		$scope.userData = userD;
-
-		console.log($scope);
-
-		alert("Hello " + $scope.userData.username);
 	}
 ])
 
@@ -281,8 +303,8 @@ adminlounge.controller('ReservationsCtrl', ['$scope', '$http', '$state', '$ionic
 		}
 	}
 })
-adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 'Menus', '$timeout', '$ionicPopup', '$templateCache',
-	function($scope, $http, $state, $ionicModal, Menus, $timeout, $ionicPopup, $templateCache) {
+adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 'Menus', '$timeout', '$ionicPopup',
+	function($scope, $http, $state, $ionicModal, Menus, $timeout, $ionicPopup) {
 
 
 		//Menu Creation
@@ -327,7 +349,7 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 		$scope.selectMenu = function(menu, index) {
 			$scope.activeMenu = menu;
 			Menus.setLastActiveIndex(index);
-			// $ionicSideMenuDelegate.toggleLeft(false);
+
 
 		};
 
@@ -361,8 +383,9 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 		};
 
 		// Open our new item modal
-		$scope.newItem = function() {
+		$scope.newItem = function(action) {
 			//$scope.itemModal.show();
+			$scope.action = action;
 			$scope.itemModal.show();
 
 		};
@@ -381,14 +404,9 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 			});
 		};
 
-
-
-		// Try to create the first menu, make sure to defer
-		// this by using $timeout so everything is initialized
-		// properly
 		$timeout(function() {
 			if ($scope.menus.length == 0) {
-				//while (true) {
+
 				$ionicPopup.prompt({
 					title: 'Menu Name',
 					inputType: 'text',
@@ -397,68 +415,87 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 					createMenu(res);
 
 				});
-				//}
+
 			}
 		});
 
-		// $scope.deleteItem = function(idx) {
+		// Define item buttons
+		$scope.itemButtons = [{
+			text: 'Delete',
+			type: 'button-assertive',
+			onTap: function(item) {
+				$scope.removeItem(item);
+			}
+		}, {
+			text: 'Edit',
+			type: 'button-calm',
+			onTap: function(item) {
+				$scope.showEditItem(item);
+			}
 
-		// 	console.log($scope.activeMenu.items[idx]);
-		// 	$scope.activeMenu.items.splice($scope.activeMenu.items[idx], 1);
-		// 	Menus.save($scope.menus);
-		// }
+		}];
 
-		// //Added item functionality
-		// // Define item buttons
-		// $scope.itemButtons = [{
-		// 	text: 'Delete',
-		// 	type: 'button-assertive',
-		// 	onTap: function(item) {
-		// 		$scope.removeItem(item);
-		// 	}
-		// }, {
-		// 	text: 'Edit',
-		// 	type: 'button-calm',
-		// 	onTap: function(item) {
-		// 		$scope.showEditItem(item);
-		// 	}
-		// }];
+		// Used to cache the empty form for Edit Dialog
+		$scope.saveEmpty = function(form) {
+			$scope.form = angular.copy(form);
+		}
+		$scope.removeItem = function(item) {
+			// Search & Destroy item from list
+			console.log(item)
 
-		// // Used to cache the empty form for Edit Dialog
-		// $scope.saveEmpty = function(itemForm) {
-		// 	$scope.itemForm = angular.copy(itemForm);
-		// }
-		// $scope.removeItem = function(item) {
-		// 	// Search & Destroy item from list
-		// $scope.activeMenu.items.splice($scope.item.indexOf(item));
+			var items = $scope.activeMenu.items;
 
-		// 	Menus.save($scope.menus);
+			var itemIdx = items.indexOf(item);
 
-		// }
+			console.log("idx of itme to delete", itemIdx);
 
-		// $scope.showEditItem = function(item) {
+			if (itemIdx === 0) {
+				items.splice(0, 1);
+			}
 
-		// 	// Remember edit item to change it later
-		// 	$scope.tmpEditItem = item;
+			if (itemIdx) {
+				// 2nd param indictaes number of items
+				//delete
+				items.splice(itemIdx, 1);
+				console.log(items)
+			}
 
-		// 	// Preset form values
-		// 	//$scope.item.title.$setViewValue(item.title);
-		// 	// Open dialog
-		// 	$scope.newItem('change');
-		// };
+			Menus.save($scope.menus);
 
-		// $scope.editItem = function(item) {
+		}
 
-		// 	var item = {};
-		// 	item.title = item.title;
 
-		// 	var editIndex = Menus.all().indexOf($scope.tmpEditItem);
-		// 	$scope.activeMenu.items[editIndex] = item;
+		$scope.showEditItem = function(item) {
 
-		// 	Menus.save($scope.menus);
+			// Remember edit item to change it later
 
-		// 	$scope.closeNewItem();
-		// }
+			var items = $scope.activeMenu.items;
+			var itemIdx = items.indexOf(item);
+			console.log(items[itemIdx]);
+			$scope.tempIdx = itemIdx;
+			$scope.item.title = items[itemIdx].title;
+			$scope.item.price = items[itemIdx].price;
+			// Open dialog
+			$scope.newItem('change');
+		};
+
+		$scope.editItem = function(item) {
+
+
+			var items = $scope.activeMenu.items;
+			var itemIdx = $scope.tempIdx;
+
+
+
+			items[itemIdx].title = $scope.item.title;
+			items[itemIdx].price = $scope.item.price;
+
+
+			Menus.save($scope.menus);
+			$scope.item.title = "";
+			$scope.item.price = "";
+			$scope.closeNewItem();
+		}
 
 		$scope.syncMenu = function() {
 
@@ -482,7 +519,7 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				cache: $templateCache
+
 			}).
 			success(function(response) {
 				console.log("success", response);
@@ -499,7 +536,7 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 				console.log($scope.codeStatus);
 			});
 
-			// return false;
+
 
 		};
 
@@ -507,12 +544,12 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 	}
 ])
 
-adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal', '$timeout', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $timeout, $templateCache) {
+adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal', '$timeout', '$ionicPopup',
+	function($scope, $http, $state, $ionicModal, $timeout, $ionicPopup) {
 
 
 		// Create and load the Modal
-		$ionicModal.fromTemplateUrl('../templates/modal-add-offer.html', function(modal) {
+		$ionicModal.fromTemplateUrl('new-offer.html', function(modal) {
 			$scope.offerModal = modal;
 		}, {
 			scope: $scope,
@@ -521,6 +558,45 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 		// Create new user and store them in the database
 		$scope.createOffer = function(offer) {
+
+			if (offer.title == null || offer.title == "") {
+
+				var alertBDPopup = $ionicPopup.alert({
+					title: 'Please enter title',
+					okType: 'button-positive'
+
+				});
+				alertBDPopup.then(function(res) {
+					console.log('Title Blank');
+				});
+				return false;
+			}
+
+			if (offer.message == null || offer.message == "") {
+
+				var alertBTPopup = $ionicPopup.alert({
+					title: 'Please enter message',
+					okType: 'button-positive'
+
+				});
+				alertBTPopup.then(function(res) {
+					console.log('Message Blank');
+				});
+				return false;
+			}
+
+			if (offer.expire == null || offer.expire == "") {
+
+				var alertBGPopup = $ionicPopup.alert({
+					title: 'Please enter expirey date.',
+					okType: 'button-positive'
+
+				});
+				alertBGPopup.then(function(res) {
+					console.log('Expirey Empty');
+				});
+				return false;
+			}
 
 			console.log('Hit createOffer');
 			var offer = 'offferdata=' + JSON.stringify(offer);
@@ -537,7 +613,6 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				cache: $templateCache
 			}).
 			success(function(response) {
 				console.log("success", response);
@@ -572,6 +647,29 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 			$scope.offerModal.hide();
 		};
 
+		$scope.doRefresh = function() {
+
+			console.log('Refreshing!');
+			$timeout(function() {
+
+				$scope.getOfferFn();
+				console.log("Refreshing");
+
+				//Stop the ion-refresher from spinning
+				$scope.$broadcast('scroll.refreshComplete');
+
+			}, 1000);
+
+		};
+
+		$scope.$watch('offers', function(newVal, oldVal) {
+			if (newVal === oldVal) {
+				return;
+			}
+
+			$scope.offers = newVal;
+		});
+
 		//=== getOfferFn() ====\\
 
 		$scope.getOfferFn = function() {
@@ -588,7 +686,6 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				cache: $templateCache
 			}).
 			success(function(response) {
 				console.log(response);
@@ -606,14 +703,37 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 			return false;
 		};
 
-		$scope.getOfferFn();
+
 
 	}
 ])
 
-adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $templateCache) {
+adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '$timeout',
 
+	function($scope, $http, $state, $ionicModal, $timeout) {
+
+		$scope.doRefresh = function() {
+
+			console.log('Refreshing!');
+			$timeout(function() {
+
+				$scope.getMsgFn();
+				console.log("Refreshing");
+
+				//Stop the ion-refresher from spinning
+				$scope.$broadcast('scroll.refreshComplete');
+
+			}, 1000);
+
+		};
+
+		$scope.$watch('messages', function(newVal, oldVal) {
+			if (newVal === oldVal) {
+				return;
+			}
+
+			$scope.messages = newVal;
+		});
 		//=== getMsgFn() ====\\
 
 		$scope.getMsgFn = function() {
@@ -630,7 +750,7 @@ adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				cache: $templateCache
+
 			}).
 			success(function(response) {
 				console.log(response);
@@ -648,7 +768,7 @@ adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '
 			return false;
 		};
 
-		$scope.getMsgFn();
+
 
 		// Handle respond button to messages. Opens deafult mail client
 		// and loads current index email. 
@@ -671,8 +791,8 @@ adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '
 	}
 ])
 
-adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModal', '$templateCache',
-	function($scope, $http, $state, $ionicModal, $templateCache) {
+adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModal', '$timeout', '$ionicPopup', 'md5',
+	function($scope, $http, $state, $ionicModal, $timeout, $ionicPopup, md5) {
 
 
 
@@ -685,46 +805,167 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 		});
 
 		// Create new user and store them in the database
+		// Create new user and store them in the database
 		$scope.createUser = function(userdata) {
 
-			console.log('Hit createUser');
-			var user = 'userdata=' + JSON.stringify(userdata);
-			console.log(user);
-			$scope.userModal.hide();
-			var method = 'POST';
-			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/insertuser';
-			$scope.codeStatus = "";
+			if (userdata.firstname == null || userdata.firstname == "") {
+				var alertFNPopup = $ionicPopup.alert({
+					title: 'Please enter  First Name',
+					okType: 'button-positive'
 
-			$http({
-				method: method,
-				url: inserturl,
-				data: user,
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				cache: $templateCache
-			}).
-			success(function(response) {
-				console.log("success", response);
-				$scope.user = {};
-				//magic!!!! 
-				$state.go('tab.customers', {}, {
-					reload: true,
-					inherit: false
 				});
-				$scope.userModal.remove();
+				alertFNPopup.then(function(res) {
+					console.log('First Name Blank');
+				});
+				return false;
+			}
 
-			}).
-			error(function(response) {
-				console.log("error");
-				$scope.codeStatus = response || "Request failed";
-				console.log($scope.codeStatus);
-			});
+			if (userdata.lastname == null || userdata.lastname == "") {
+				var alertLNPopup = $ionicPopup.alert({
+					title: 'Please enter  Last Name',
+					okType: 'button-positive'
 
-			// return false;
+				});
+				alertLNPopup.then(function(res) {
+					console.log('Last Name Blank');
+				});
+				return false;
+			}
+
+			if (userdata.phone == null || userdata.phone == "") {
+				var alertPHNPopup = $ionicPopup.alert({
+					title: 'Please enter  phone no.',
+					okType: 'button-positive'
+
+				});
+				alertPHNPopup.then(function(res) {
+					console.log('Phone No. Blank');
+				});
+				return false;
+			}
+			if (userdata.dob == null || userdata.dob == "") {
+				var alertDOBPopup = $ionicPopup.alert({
+					title: 'Please enter  D.O.B',
+					okType: 'button-positive'
+
+				});
+				alertDOBPopup.then(function(res) {
+					console.log('DOB Blank');
+				});
+				return false;
+			} else {
+
+				if (userdata.email == null || userdata.email == "") {
+					var alertEMPopup = $ionicPopup.alert({
+						title: 'Not a valid e-mail address!',
+						okType: 'button-positive'
+
+					});
+					alertEMPopup.then(function(res) {
+						console.log('Invalid Email');
+					});
+					return false;
+				} else {
+					var x = userdata.email;
+					var atpos = x.indexOf("@");
+					var dotpos = x.lastIndexOf(".");
+					console.log('Hit createUser');
+
+					if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
+
+						var alertEPopup = $ionicPopup.alert({
+							title: 'Not a valid e-mail address!',
+							okType: 'button-positive'
+
+						});
+						alertEPopup.then(function(res) {
+							console.log('Invalid Email');
+						});
+						return false;
+					}
+				}
+
+				if (userdata.password == null || userdata.passwordconfirm == null || userdata.passwordconfirm == "" || userdata.password == "") {
+
+					var alertPASSPopup = $ionicPopup.alert({
+						title: 'Please Enter Password!',
+						okType: 'button-positive'
+
+					});
+					alertPASSPopup.then(function(res) {
+						console.log('Invalid Password');
+					});
+					return false;
+				}
+
+
+				if (userdata.password === userdata.passwordconfirm) {
+					var mdpass = md5.createHash(userdata.password || '')
+					var newUser = {
+						'firstname': userdata.firstname,
+						'lastname': userdata.lastname,
+						'email': userdata.email,
+						'phone': userdata.phone,
+						'password': mdpass,
+						'dob': userdata.dob
+					};
+
+					var user = 'userdata=' + JSON.stringify(newUser);
+					console.log('Sending to server => ' + user);
+
+					$scope.userModal.hide();
+					var method = 'POST';
+					var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/insertuser';
+					$scope.codeStatus = "";
+
+					$http({
+						method: method,
+						url: inserturl,
+						data: user,
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+
+					}).
+					success(function(response) {
+						console.log("success", response);
+						$scope.user = {};
+						var alertPopup = $ionicPopup.alert({
+							title: 'Success!',
+							okType: 'button-positive'
+
+						});
+						alertPopup.then(function(res) {
+							console.log('Successful');
+						});
+						$state.go('tab.customers', {}, {
+							reload: true,
+							inherit: false
+						});
+						$scope.userModal.remove();
+
+					}).
+					error(function(response) {
+						console.log("error");
+						$scope.codeStatus = response || "Request failed";
+						console.log($scope.codeStatus);
+					});
+
+				} else {
+					var alertPopup = $ionicPopup.alert({
+						title: 'Passwords Do Not Match!',
+						okType: 'button-positive'
+
+					});
+					alertPopup.then(function(res) {
+						console.log('Password Mismatch');
+					});
+
+				}
+			}
+
 
 		};
-
 
 
 		// Open new user modal
@@ -736,6 +977,29 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 		$scope.closeNewUser = function() {
 			$scope.userModal.hide();
 		};
+
+		$scope.doRefresh = function() {
+
+			console.log('Refreshing!');
+			$timeout(function() {
+
+				$scope.getCustomers();
+				console.log("Refreshing");
+
+				//Stop the ion-refresher from spinning
+				$scope.$broadcast('scroll.refreshComplete');
+
+			}, 1000);
+
+		};
+
+		$scope.$watch('customers', function(newVal, oldVal) {
+			if (newVal === oldVal) {
+				return;
+			}
+
+			$scope.customers = newVal;
+		});
 
 		//=== Get Customers ====\\
 
@@ -753,7 +1017,6 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				cache: $templateCache
 			}).
 			success(function(response) {
 				console.log(response);
@@ -765,10 +1028,10 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 				console.log($scope.codeStatus);
 			});
 
-			return false;
+
 		};
 
-		$scope.getCustomers();
+
 
 		$scope.contacts = {};
 
@@ -805,16 +1068,4 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 
 	}
-])
-// A simple controller that fetches a list of data from a service
-.controller('PetIndexCtrl', function($scope, PetService) {
-	// "Pets" is a service returning mock data (services.js)
-	$scope.pets = PetService.all();
-})
-
-
-// A simple controller that shows a tapped item's data
-.controller('PetDetailCtrl', function($scope, $stateParams, PetService) {
-	// "Pets" is a service returning mock data (services.js)
-	$scope.pet = PetService.get($stateParams.petId);
-});
+]);

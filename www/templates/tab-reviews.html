@@ -1,5 +1,10 @@
-<ion-view title="Reviews">
-  <ion-content class="has-header padding">
+<ion-view title="Reviews" ng-init="getReviewFn()">
+  <ion-content  scroll="true" class="has-header padding">
+    <ion-refresher on-refresh="doRefresh()"
+                    pulling-text="Pull to refresh..."
+                    refreshing-text="Refreshing!"
+                    refreshing-icon="ion-loading-a">
+    </ion-refresher>
   
    <ion-list>
     <div class="item-container">
