@@ -69,11 +69,13 @@ color: #fff;
 }
 .msg-left > p{
   white-space: normal;
-
 }
 .msg-right{
   width: 20%;
   float: left;
   margin-left: 10%;
   margin-top: 5%;
+}
+.whiteadj > p{
+  white-space: normal;
 }
