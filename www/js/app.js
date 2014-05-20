@@ -2,7 +2,6 @@
 
 var adminlounge = angular.module('adminlounge', ['ionic', 'angular-md5', 'adminlounge.services', 'adminlounge.controllers', 'adminlounge.directives'])
 
-
 .config(function($stateProvider, $urlRouterProvider) {
 
     $stateProvider

@@ -1,6 +1,5 @@
 angular.module('adminlounge.controllers', [])
 
-
 //Log Out 
 adminlounge.controller('LogoutCtrl', ['$scope', '$state',
 	function($scope, $state) {
@@ -37,21 +36,13 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 	function($scope, $http, $state, $ionicModal, $ionicPopup, md5) {
 
 		if (localStorage.length > 0) {
-			console.log("Clearing Current User Data....")
-			//localStorage.clear();
 			localStorage.removeItem("userData");
-
 		}
 
 		// Create new user and store them in the database
 		$scope.logIn = function(userdata) {
 
-
-			console.log('Hit logIn');
 			var user = JSON.stringify(userdata);
-			console.log(user);
-
-			console.log(md5.createHash(user.password || ''));
 
 			var method = 'POST';
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/login';
@@ -67,11 +58,8 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 				},
 			}).
 			success(function(response) {
-				// console.log("success", response);
+
 				if (response.statusCode == 200) {
-					// alert("It worked!!!");
-					// A confirm dialog
-					console.log(response);
 
 					var data = response.payload.userData;
 
@@ -82,7 +70,7 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 						template: 'It might taste good'
 					});
 					alertPopup.then(function(res) {
-						console.log('Logged In');
+
 					});
 
 					$state.go('tab.bookings', {}, {
@@ -90,21 +78,16 @@ adminlounge.controller('LogInCtrl', ['$scope', '$http', '$state', '$ionicModal',
 						inherit: false
 					});
 				} else if (response.statusCode == 500) {
-					console.error("Nope!");
 
 					var alertPopup = $ionicPopup.alert({
 						title: 'Invalid log in. Please Try Again',
-						//template: 'It might taste good'
 					});
 					alertPopup.then(function(res) {
-						console.log('Invalid');
+
 					});
 				}
-
-
 			}).
 			error(function(response) {
-				console.log("error");
 				$scope.codeStatus = response || "Request failed";
 				console.log($scope.codeStatus);
 			});
@@ -119,13 +102,10 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 		$scope.doRefresh = function() {
 
-			console.log('Refreshing!');
 			$timeout(function() {
 
 				$scope.getReviewFn();
-				console.log("Refreshing");
 
-				//Stop the ion-refresher from spinning
 				$scope.$broadcast('scroll.refreshComplete');
 
 			}, 1000);
@@ -140,13 +120,11 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 			$scope.reviews = newVal;
 		});
 		// Populate review page with data. Pull from databse via server
-
 		$scope.getReviewFn = function() {
 			// on refactore move var direct.
 			var method = 'GET';
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/getreview';
 			$scope.codeStatus = "";
-			console.log('Hit Function getReviewFn');
 
 			$http({
 				method: method,
@@ -157,12 +135,9 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 			}).
 			success(function(response) {
-				// console.log(response);
 				$scope.reviews = response;
-
 			}).
 			error(function(response) {
-				console.log("error");
 				$scope.codeStatus = response || "Request failed";
 				console.log($scope.codeStatus);
 			});
@@ -170,15 +145,9 @@ adminlounge.controller('ReviewCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 		};
 
-
-
 		// Handle respond button to review. Opens deafult mail client
 		// and loads current index email. 
 		$scope.respondReview = function(idx) {
-			console.log(idx)
-
-			console.log($scope.reviews[idx].email);
-			//$scope.respondModal.show();
 
 			$scope.sendEmail = function(email) {
 				var link = "mailto:" + email;
@@ -200,13 +169,10 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 
 		$scope.doRefresh = function() {
 
-			console.log('Refreshing!');
 			$timeout(function() {
 
 				$scope.getBookingFn();
-				console.log("Refreshing");
 
-				//Stop the ion-refresher from spinning
 				$scope.$broadcast('scroll.refreshComplete');
 
 			}, 1000);
@@ -222,12 +188,10 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 		});
 		// Populate booking tab with booking requests.
 		$scope.getBookingFn = function() {
-			// on refactore move var direct.
+
 			var method = 'GET';
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/getbookingrequest';
 			$scope.codeStatus = "";
-			console.log('Hit Function getBookingFn');
-
 
 			$http({
 				method: method,
@@ -237,34 +201,18 @@ adminlounge.controller('BookingCtrl', ['$scope', '$http', '$state', '$ionicModal
 				},
 			}).
 			success(function(response) {
-				console.log(response);
 				$scope.bookings = response;
-
-
-
 			}).
 			error(function(response) {
-				console.log("error");
 				$scope.codeStatus = response || "Request failed";
 				console.log($scope.codeStatus);
 			});
-
-			return false;
 		};
 
-
-
-		// Handle respond button to bookings. Opens deafult mail client
-		// and loads current index email. 
 		$scope.respondBooking = function(idx) {
-			console.log(idx)
-
-			console.log($scope.bookings[idx].email);
-
 
 			$scope.sendEmail = function(email) {
 				var link = "mailto:" + email;
-
 
 				window.location.href = link;
 
@@ -308,8 +256,6 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 
 
 		//Menu Creation
-
-
 		// A utility function for creating a new menu
 		// with the given menuTitle
 		var createMenu = function(menuTitle) {
@@ -336,10 +282,7 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 				if (res != false) {
 					createMenu(res);
 				} else {
-
 					console.log("cancel");
-
-
 				}
 			});
 
@@ -349,8 +292,6 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 		$scope.selectMenu = function(menu, index) {
 			$scope.activeMenu = menu;
 			Menus.setLastActiveIndex(index);
-
-
 		};
 
 
@@ -384,7 +325,6 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 
 		// Open our new item modal
 		$scope.newItem = function(action) {
-			//$scope.itemModal.show();
 			$scope.action = action;
 			$scope.itemModal.show();
 
@@ -392,7 +332,6 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 
 		// Close the new item modal
 		$scope.closeNewItem = function() {
-			//$scope.itemModal.hide();
 			// Remove dialog 
 			$scope.itemModal.remove();
 			// Reload modal template to have cleared form
@@ -441,13 +380,10 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 		}
 		$scope.removeItem = function(item) {
 			// Search & Destroy item from list
-			console.log(item)
 
 			var items = $scope.activeMenu.items;
 
 			var itemIdx = items.indexOf(item);
-
-			console.log("idx of itme to delete", itemIdx);
 
 			if (itemIdx === 0) {
 				items.splice(0, 1);
@@ -457,7 +393,6 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 				// 2nd param indictaes number of items
 				//delete
 				items.splice(itemIdx, 1);
-				console.log(items)
 			}
 
 			Menus.save($scope.menus);
@@ -471,7 +406,6 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 
 			var items = $scope.activeMenu.items;
 			var itemIdx = items.indexOf(item);
-			console.log(items[itemIdx]);
 			$scope.tempIdx = itemIdx;
 			$scope.item.title = items[itemIdx].title;
 			$scope.item.price = items[itemIdx].price;
@@ -481,15 +415,11 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 
 		$scope.editItem = function(item) {
 
-
 			var items = $scope.activeMenu.items;
 			var itemIdx = $scope.tempIdx;
 
-
-
 			items[itemIdx].title = $scope.item.title;
 			items[itemIdx].price = $scope.item.price;
-
 
 			Menus.save($scope.menus);
 			$scope.item.title = "";
@@ -500,12 +430,9 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 		$scope.syncMenu = function() {
 
 			var menus = localStorage.getItem("menus");
-
 			var menuD = JSON.parse(menus);
-
-			console.log('Hit syncMenu');
 			var menu = 'menu=' + JSON.stringify(menuD);
-			console.log(menu);
+
 			var method = 'POST';
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/syncmenu';
 			$scope.codeStatus = "";
@@ -519,14 +446,12 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 				},
 			}).
 			success(function(response) {
-				console.log("success", response);
 				var alertDOBPopup = $ionicPopup.alert({
 					title: 'Menus Updated in Database',
-					okType: 'button-dark'
+					okType: 'button-positive'
 
 				});
 				alertDOBPopup.then(function(res) {
-					console.log('Menus Syncd');
 					$state.go('tab.menus', {}, {
 						reload: true,
 						inherit: false
@@ -534,12 +459,9 @@ adminlounge.controller('MenuCtrl', ['$scope', '$http', '$state', '$ionicModal', 
 				});
 			}).
 			error(function(response) {
-				console.log("error");
 				$scope.codeStatus = response || "Request failed";
 				console.log($scope.codeStatus);
 			});
-
-
 
 		};
 
@@ -570,7 +492,7 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 				});
 				alertBDPopup.then(function(res) {
-					console.log('Title Blank');
+
 				});
 				return false;
 			}
@@ -583,7 +505,7 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 				});
 				alertBTPopup.then(function(res) {
-					console.log('Message Blank');
+
 				});
 				return false;
 			}
@@ -596,14 +518,14 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 				});
 				alertBGPopup.then(function(res) {
-					console.log('Expirey Empty');
+
 				});
 				return false;
 			}
 
-			console.log('Hit createOffer');
+
 			var offer = 'offferdata=' + JSON.stringify(offer);
-			console.log(offer);
+
 			$scope.offerModal.hide();
 			var method = 'POST';
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/newoffer';
@@ -618,9 +540,9 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 				},
 			}).
 			success(function(response) {
-				console.log("success", response);
+
 				$scope.offer = {};
-				//magic!!!! 
+
 				$state.go('tab.offers', {}, {
 					reload: true,
 					inherit: false
@@ -629,13 +551,9 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 			}).
 			error(function(response) {
-				console.log("error");
 				$scope.codeStatus = response || "Request failed";
 				console.log($scope.codeStatus);
 			});
-
-			// return false;
-
 		};
 
 
@@ -652,13 +570,10 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 
 		$scope.doRefresh = function() {
 
-			console.log('Refreshing!');
 			$timeout(function() {
 
 				$scope.getOfferFn();
-				console.log("Refreshing");
 
-				//Stop the ion-refresher from spinning
 				$scope.$broadcast('scroll.refreshComplete');
 
 			}, 1000);
@@ -680,8 +595,6 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 			var method = 'GET';
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/getoffer';
 			$scope.codeStatus = "";
-			console.log('Hit Function getOfferFn');
-
 
 			$http({
 				method: method,
@@ -691,22 +604,13 @@ adminlounge.controller('OffersCtrl', ['$scope', '$http', '$state', '$ionicModal'
 				},
 			}).
 			success(function(response) {
-				console.log(response);
 				$scope.offers = response;
-
-
-
 			}).
 			error(function(response) {
-				console.log("error");
 				$scope.codeStatus = response || "Request failed";
 				console.log($scope.codeStatus);
 			});
-
-			return false;
 		};
-
-
 
 	}
 ])
@@ -717,13 +621,10 @@ adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '
 
 		$scope.doRefresh = function() {
 
-			console.log('Refreshing!');
 			$timeout(function() {
 
 				$scope.getMsgFn();
-				console.log("Refreshing");
 
-				//Stop the ion-refresher from spinning
 				$scope.$broadcast('scroll.refreshComplete');
 
 			}, 1000);
@@ -744,8 +645,6 @@ adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '
 			var method = 'GET';
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/getmsg';
 			$scope.codeStatus = "";
-			console.log('Hit Function getMsgFn');
-
 
 			$http({
 				method: method,
@@ -753,22 +652,14 @@ adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '
 				headers: {
 					'Content-Type': 'application/json'
 				},
-
 			}).
 			success(function(response) {
-				console.log(response);
 				$scope.messages = response;
-
-
-
 			}).
 			error(function(response) {
-				console.log("error");
 				$scope.codeStatus = response || "Request failed";
 				console.log($scope.codeStatus);
 			});
-
-			return false;
 		};
 
 
@@ -776,17 +667,11 @@ adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '
 		// Handle respond button to messages. Opens deafult mail client
 		// and loads current index email. 
 		$scope.respondMsg = function(idx) {
-			console.log(idx)
-
-			console.log($scope.messages[idx].email);
-			//$scope.respondModal.show();
 
 			$scope.sendEmail = function(email) {
 				var link = "mailto:" + email;
 
-
 				window.location.href = link;
-
 			};
 
 			$scope.sendEmail($scope.messages[idx].email);
@@ -797,8 +682,6 @@ adminlounge.controller('MsgCtrl', ['$scope', '$http', '$state', '$ionicModal', '
 adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModal', '$timeout', '$ionicPopup', 'md5',
 	function($scope, $http, $state, $ionicModal, $timeout, $ionicPopup, md5) {
 
-
-
 		// Create and load the Modal
 		$ionicModal.fromTemplateUrl('new-user.html', function(modal) {
 			$scope.userModal = modal;
@@ -807,7 +690,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 			animation: 'slide-in-up'
 		});
 
-		// Create new user and store them in the database
+
 		// Create new user and store them in the database
 		$scope.createUser = function(userdata) {
 
@@ -818,7 +701,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 				});
 				alertFNPopup.then(function(res) {
-					console.log('First Name Blank');
+
 				});
 				return false;
 			}
@@ -830,7 +713,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 				});
 				alertLNPopup.then(function(res) {
-					console.log('Last Name Blank');
+
 				});
 				return false;
 			}
@@ -842,7 +725,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 				});
 				alertPHNPopup.then(function(res) {
-					console.log('Phone No. Blank');
+
 				});
 				return false;
 			}
@@ -853,7 +736,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 				});
 				alertDOBPopup.then(function(res) {
-					console.log('DOB Blank');
+
 				});
 				return false;
 			} else {
@@ -865,14 +748,14 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 					});
 					alertEMPopup.then(function(res) {
-						console.log('Invalid Email');
+
 					});
 					return false;
 				} else {
 					var x = userdata.email;
 					var atpos = x.indexOf("@");
 					var dotpos = x.lastIndexOf(".");
-					console.log('Hit createUser');
+
 
 					if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
 
@@ -882,7 +765,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 						});
 						alertEPopup.then(function(res) {
-							console.log('Invalid Email');
+
 						});
 						return false;
 					}
@@ -896,7 +779,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 					});
 					alertPASSPopup.then(function(res) {
-						console.log('Invalid Password');
+
 					});
 					return false;
 				}
@@ -914,7 +797,6 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 					};
 
 					var user = 'userdata=' + JSON.stringify(newUser);
-					console.log('Sending to server => ' + user);
 
 					$scope.userModal.hide();
 					var method = 'POST';
@@ -928,10 +810,8 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 						headers: {
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-
 					}).
 					success(function(response) {
-						console.log("success", response);
 						$scope.user = {};
 						var alertPopup = $ionicPopup.alert({
 							title: 'Success!',
@@ -939,7 +819,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 						});
 						alertPopup.then(function(res) {
-							console.log('Successful');
+
 						});
 						$state.go('tab.customers', {}, {
 							reload: true,
@@ -949,7 +829,6 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 					}).
 					error(function(response) {
-						console.log("error");
 						$scope.codeStatus = response || "Request failed";
 						console.log($scope.codeStatus);
 					});
@@ -961,7 +840,7 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 					});
 					alertPopup.then(function(res) {
-						console.log('Password Mismatch');
+
 					});
 
 				}
@@ -983,11 +862,9 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 		$scope.doRefresh = function() {
 
-			console.log('Refreshing!');
 			$timeout(function() {
 
 				$scope.getCustomers();
-				console.log("Refreshing");
 
 				//Stop the ion-refresher from spinning
 				$scope.$broadcast('scroll.refreshComplete');
@@ -1011,8 +888,6 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 			var method = 'GET';
 			var inserturl = 'http://murmuring-beyond-7893.herokuapp.com/getusers';
 			$scope.codeStatus = "";
-			console.log('Hit Function getCustomers');
-
 
 			$http({
 				method: method,
@@ -1022,19 +897,15 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 				},
 			}).
 			success(function(response) {
-				console.log(response);
 				$scope.customers = response;
 			}).
 			error(function(response) {
-				console.log("error");
 				$scope.codeStatus = response || "Request failed";
 				console.log($scope.codeStatus);
 			});
 
 
 		};
-
-
 
 		$scope.contacts = {};
 
@@ -1053,14 +924,9 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 		// Handle respond button to customers. Opens deafult mail client
 		// and loads current index email. 
 		$scope.emailCustomer = function(idx) {
-			console.log(idx)
-
-			console.log($scope.customers[idx].email);
-
 
 			$scope.sendEmail = function(email) {
 				var link = "mailto:" + email;
-
 
 				window.location.href = link;
 
@@ -1068,7 +934,6 @@ adminlounge.controller('CustomerCtrl', ['$scope', '$http', '$state', '$ionicModa
 
 			$scope.sendEmail($scope.customers[idx].email);
 		};
-
 
 	}
 ]);
